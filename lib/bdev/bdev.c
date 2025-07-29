@@ -6179,6 +6179,7 @@ spdk_bdev_writev_blocks_ext(struct spdk_bdev_desc *desc, struct spdk_io_channel 
 			    spdk_bdev_io_completion_cb cb, void *cb_arg,
 			    struct spdk_bdev_ext_io_opts *opts)
 {
+	printf("spdk_bdev_writev_blocks_ext is deprecated, use spdk_bdev_writev_blocks_with_md instead.\n");
 	struct spdk_memory_domain *domain = NULL;
 	struct spdk_accel_sequence *seq = NULL;
 	void *domain_ctx = NULL, *md = NULL;

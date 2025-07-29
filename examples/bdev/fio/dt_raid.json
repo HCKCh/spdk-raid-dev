@@ -1,0 +1,89 @@
+{
+    "subsystems": [
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "num_blocks": 200,
+                        "block_size": 4096,
+                        "name": "Malloc0"
+                    },
+                    "method": "bdev_malloc_create"
+                }
+            ]
+        },
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "num_blocks": 200,
+                        "block_size": 4096,
+                        "name": "Malloc1"
+                    },
+                    "method": "bdev_malloc_create"
+                }
+            ]
+        },
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "num_blocks": 200,
+                        "block_size": 4096,
+                        "name": "Malloc2"
+                    },
+                    "method": "bdev_malloc_create"
+                }
+            ]
+        },
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "num_blocks": 200,
+                        "block_size": 4096,
+                        "name": "Malloc3"
+                    },
+                    "method": "bdev_malloc_create"
+                }
+            ]
+        },
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "num_blocks": 200,
+                        "block_size": 4096,
+                        "name": "Malloc4"
+                    },
+                    "method": "bdev_malloc_create"
+                }
+            ]
+        },
+        {
+            "subsystem": "bdev",
+            "config": [
+                {
+                    "params":{
+                        "name": "dtraid",
+                        "strip_size_kb": 4,
+                        "raid_level": "5",
+                        "base_bdevs":[
+                            "Malloc0",
+                            "Malloc1",
+                            "Malloc2",
+                            "Malloc3",
+                            "Malloc4"
+                        ]
+                    },
+                    "method": "bdev_raid_create"
+                }
+            ]
+        }
+    ]
+}
