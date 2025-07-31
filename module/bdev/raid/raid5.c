@@ -250,8 +250,8 @@ raid5_xor_stripe_cb(void *_stripe_req, int status)
 	struct stripe_request *stripe_req = _stripe_req;
 
 	stripe_req->xor.remaining -= stripe_req->xor.len;
-	printf("- [raid5_xor_stripe_cb] stripe_index = %ld, remaining = %ld, len = %zu, status = %d\n",
-	       stripe_req->stripe_index, stripe_req->xor.remaining, stripe_req->xor.len, status);
+	// printf("- [raid5_xor_stripe_cb] stripe_index = %ld, remaining = %ld, len = %zu, status = %d\n",
+	//        stripe_req->stripe_index, stripe_req->xor.remaining, stripe_req->xor.len, status);
 	if (stripe_req->xor.remaining > 0) {
 		stripe_req->xor.len = spdk_ioviter_nextv(stripe_req->chunk_iov_iters,
 				      stripe_req->r5ch->chunk_xor_buffers);
@@ -280,8 +280,8 @@ raid5_xor_stripe_continue(struct stripe_request *stripe_req)
 	uint8_t n_src = raid5_stripe_data_chunks_num(raid_bdev);
 	uint8_t i;
 	int ret;
-	printf("- [raid5_xor_stripe_continue] stripe_index = %ld, num_blocks = %ld, n_src = %d\n",
-	       stripe_req->stripe_index, raid_io->num_blocks, n_src);
+	// printf("- [raid5_xor_stripe_continue] stripe_index = %ld, num_blocks = %ld, n_src = %d\n",
+	//       stripe_req->stripe_index, raid_io->num_blocks, n_src);
 	assert(stripe_req->xor.len > 0);
 
 	for (i = 0; i < n_src; i++) {
@@ -309,14 +309,14 @@ raid5_xor_small_write_stripe_continue(struct stripe_request *stripe_req, uint8_t
 	// uint8_t n_src = raid5_stripe_data_chunks_num(raid_bdev);
 	uint8_t i;
 	int ret;
-	printf("- [raid5_xor_stripe_continue] stripe_index = %ld, num_blocks = %ld, n_src = %d\n",
-	       stripe_req->stripe_index, raid_io->num_blocks, n_src);
+	//printf("- [raid5_xor_stripe_continue] stripe_index = %ld, num_blocks = %ld, n_src = %d\n",
+	//       stripe_req->stripe_index, raid_io->num_blocks, n_src);
 	assert(stripe_req->xor.len > 0);
 
 	for (i = 0; i < n_src; i++) {
 		stripe_req->chunk_xor_buffers[i] = r5ch->chunk_xor_buffers[i];
 	}
-	printf("-- [raid5_xor_stripe_continue] 2\n");
+	//printf("-- [raid5_xor_stripe_continue] 2\n");
 	ret = spdk_accel_submit_xor(r5ch->accel_ch, r5ch->chunk_xor_buffers[n_src-1],
 				    stripe_req->chunk_xor_buffers, n_src, stripe_req->xor.len,
 				    raid5_xor_stripe_cb, stripe_req);
@@ -332,7 +332,7 @@ raid5_xor_small_write_stripe_continue(struct stripe_request *stripe_req, uint8_t
 static void
 raid5_xor_small_write_stripe(struct stripe_request *stripe_req, stripe_req_xor_cb cb)
 {
-	printf("- [raid5_xor_small_write_stripe] START!!!\n");
+	//printf("- [raid5_xor_small_write_stripe] START!!!\n");
 	struct raid5_io_channel *r5ch = stripe_req->r5ch;
 	struct raid_bdev_io *raid_io = stripe_req->raid_io;
 	struct raid_bdev *raid_bdev = raid_io->raid_bdev;
@@ -377,7 +377,7 @@ raid5_xor_small_write_stripe(struct stripe_request *stripe_req, stripe_req_xor_c
 	r5ch->chunk_xor_iovs[c] = dest_chunk->iovs;
 	r5ch->chunk_xor_iovcnt[c] = dest_chunk->iovcnt;
 	c++;
-	printf("- [raid5_xor_small_write_stripe] num_blocks = %ld, c = %d\n", num_blocks, c);
+	//printf("- [raid5_xor_small_write_stripe] num_blocks = %ld, c = %d\n", num_blocks, c);
 	// for (int i = 0; i < raid_bdev->num_base_bdevs; i++) {
 	// 	printf("chunk_xor_iovs[%d]: iovcnt=%zu\n", i, r5ch->chunk_xor_iovcnt[i]);
 	// 	for (int j = 0; j < r5ch->chunk_xor_iovcnt[i]; j++) {
@@ -687,16 +687,16 @@ raid5_small_write_stripe_request_map_iovecs(struct stripe_request *stripe_req)
 	size_t raid_io_offset = 0;
 	size_t raid_io_iov_offset = 0;
 	int i;
-	printf("- [raid5_stripe_request_map_iovecs] START!!\n");
+	//printf("- [raid5_stripe_request_map_iovecs] START!!\n");
 	FOR_EACH_DATA_CHUNK(stripe_req, chunk) {
 		int chunk_iovcnt = 0;
 		uint64_t len = raid_bdev->strip_size * raid_bdev->bdev.blocklen;
 		size_t off = raid_io_iov_offset;
 		int ret;
-		printf("- [raid5_stripe_request_map_iovecs] chunk %d, len %zu\n", chunk->index, len);
+		//printf("- [raid5_stripe_request_map_iovecs] chunk %d, len %zu\n", chunk->index, len);
 		if (chunk->index != raid_io->offset_blocks) {
 			// 只做 read，不分配 iovec
-			printf("-- [raid5_stripe_request_map_iovecs] chunk->index %d != raid_io->offset_blocks %ld\n", chunk->index, raid_io->offset_blocks);
+			//printf("-- [raid5_stripe_request_map_iovecs] chunk->index %d != raid_io->offset_blocks %ld\n", chunk->index, raid_io->offset_blocks);
 			continue;
 		}
 		for (i = raid_io_iov_idx; i < raid_io->iovcnt; i++) {
@@ -744,7 +744,7 @@ raid5_small_write_stripe_request_map_iovecs(struct stripe_request *stripe_req)
 	stripe_req->parity_chunk->iovs[0].iov_len = raid_bdev->strip_size * raid_bdev->bdev.blocklen;
 	stripe_req->parity_chunk->iovcnt = 1;
 	stripe_req->parity_chunk->md_buf = stripe_req->write.parity_md_buf;
-	printf("- [raid5_stripe_request_map_iovecs] END!!\n");
+	//printf("- [raid5_stripe_request_map_iovecs] END!!\n");
 	return 0;
 }
 static int
@@ -758,13 +758,13 @@ raid5_stripe_request_map_iovecs(struct stripe_request *stripe_req)
 	size_t raid_io_offset = 0;
 	size_t raid_io_iov_offset = 0;
 	int i;
-	printf("- [raid5_stripe_request_map_iovecs] START!!\n");
+	//printf("- [raid5_stripe_request_map_iovecs] START!!\n");
 	FOR_EACH_DATA_CHUNK(stripe_req, chunk) {
 		int chunk_iovcnt = 0;
 		uint64_t len = raid_bdev->strip_size * raid_bdev->bdev.blocklen;
 		size_t off = raid_io_iov_offset;
 		int ret;
-		printf("- [raid5_stripe_request_map_iovecs] chunk %d, len %zu\n", chunk->index, len);
+		//printf("- [raid5_stripe_request_map_iovecs] chunk %d, len %zu\n", chunk->index, len);
 		for (i = raid_io_iov_idx; i < raid_io->iovcnt; i++) {
 			chunk_iovcnt++;
 			off += raid_io->iovs[i].iov_len;
@@ -810,19 +810,19 @@ raid5_stripe_request_map_iovecs(struct stripe_request *stripe_req)
 	stripe_req->parity_chunk->iovs[0].iov_len = raid_bdev->strip_size * raid_bdev->bdev.blocklen;
 	stripe_req->parity_chunk->iovcnt = 1;
 	stripe_req->parity_chunk->md_buf = stripe_req->write.parity_md_buf;
-	printf("- [raid5_stripe_request_map_iovecs] END!!\n");
+	//printf("- [raid5_stripe_request_map_iovecs] END!!\n");
 	return 0;
 }
 static void
 raid5_stripe_request_submit_chunks(struct stripe_request *stripe_req)
 {
-	printf("- [raid5_stripe_request_submit_chunks] START!!\n");
+	//printf("- [raid5_stripe_request_submit_chunks] START!!\n");
 	struct raid_bdev_io *raid_io = stripe_req->raid_io;
 	struct chunk *start = &stripe_req->chunks[raid_io->base_bdev_io_submitted];
 	struct chunk *chunk;
 	int i = 0;
 	FOR_EACH_CHUNK_FROM(stripe_req, chunk, start) {
-		printf("index = %d, chunk->index = %d, chunk->iovcnt = %d\n", i, chunk->index, chunk->iovcnt);
+		//printf("index = %d, chunk->index = %d, chunk->iovcnt = %d\n", i, chunk->index, chunk->iovcnt);
 		if(chunk->iovcnt > 0){
 			if (spdk_unlikely(raid5_chunk_submit(chunk) != 0)) {
 				break;
@@ -830,7 +830,7 @@ raid5_stripe_request_submit_chunks(struct stripe_request *stripe_req)
 		}
 		i++;
 	}
-	printf("- [raid5_stripe_request_submit_chunks] Done!!\n");
+	//printf("- [raid5_stripe_request_submit_chunks] Done!!\n");
 }
 
 static inline void
@@ -846,25 +846,25 @@ static inline void
 raid5_stripe_small_write_request_init(struct stripe_request *stripe_req, struct raid_bdev_io *raid_io,
 			   uint64_t stripe_index, uint64_t num_written_blocks)
 {
-	printf("- [raid5_stripe_small_write_request_init] START!!\n");
+	//printf("- [raid5_stripe_small_write_request_init] START!!\n");
 	stripe_req->raid_io = raid_io;
 	stripe_req->stripe_index = stripe_index;
 	stripe_req->parity_chunk = &stripe_req->chunks[raid5_stripe_parity_chunk_index(raid_io->raid_bdev,
 				   stripe_index)];
-	printf("- [raid5_stripe_small_write_request_init] END!!\n");
+	//printf("- [raid5_stripe_small_write_request_init] END!!\n");
 }
 static void
 raid5_stripe_write_request_xor_done(struct stripe_request *stripe_req, int status)
 {
 	struct raid_bdev_io *raid_io = stripe_req->raid_io;
-	printf("- [raid5_stripe_write_request_xor_done] START!!\n");
+	//printf("- [raid5_stripe_write_request_xor_done] START!!\n");
 	if (status != 0) {
 		raid5_stripe_request_release(stripe_req);
 		raid_bdev_io_complete(raid_io, SPDK_BDEV_IO_STATUS_FAILED);
 	} else {
 		raid5_stripe_request_submit_chunks(stripe_req);
 	}
-	printf("- [raid5_stripe_write_request_xor_done] END!!\n");
+	//printf("- [raid5_stripe_write_request_xor_done] END!!\n");
 }
 
 static int
@@ -874,7 +874,7 @@ raid5_submit_small_write_request(struct raid_bdev_io *raid_io, uint64_t stripe_i
 	struct raid5_io_channel *r5ch = raid_bdev_channel_get_module_ctx(raid_io->raid_ch);
 	struct stripe_request *stripe_req;
 	int ret;
-	printf("[raid5_submit_small_write_request] START!!\n");
+	//printf("[raid5_submit_small_write_request] START!!\n");
 	stripe_req = TAILQ_FIRST(&r5ch->free_stripe_requests.write);
 	if (!stripe_req) {
 		return -ENOMEM;
@@ -890,7 +890,7 @@ raid5_submit_small_write_request(struct raid_bdev_io *raid_io, uint64_t stripe_i
 	TAILQ_REMOVE(&r5ch->free_stripe_requests.write, stripe_req, link);
 
 	raid_io->module_private = stripe_req;
-	raid_io->base_bdev_io_remaining = raid_bdev->num_base_bdevs;
+	raid_io->base_bdev_io_remaining = 2; //raid_bdev->num_base_bdevs;
 
 	if (raid_bdev_channel_get_base_channel(raid_io->raid_ch, stripe_req->parity_chunk->index) != NULL) {
 		// raid5_xor_stripe(stripe_req, raid5_stripe_write_request_xor_done);
@@ -898,7 +898,7 @@ raid5_submit_small_write_request(struct raid_bdev_io *raid_io, uint64_t stripe_i
 	} else {
 		raid5_stripe_write_request_xor_done(stripe_req, 0);
 	}
-	printf("[raid5_submit_small_write_request] END!!\n");
+	//printf("[raid5_submit_small_write_request] END!!\n");
 	return 0;
 }
 static int
@@ -1097,8 +1097,8 @@ raid5_submit_rw_request(struct raid_bdev_io *raid_io)
 	case SPDK_BDEV_IO_TYPE_WRITE:
 		// assert(stripe_offset == 0);
 		// assert(raid_io->num_blocks == r5f_info->stripe_blocks);
-		printf("[raid5_submit_rw_request]: stripe_index=%" PRIu64 ", stripe_offset=%" PRIu64 "\n",
-		       stripe_index, stripe_offset);
+		//printf("[raid5_submit_rw_request]: stripe_index=%" PRIu64 ", stripe_offset=%" PRIu64 "\n",
+		//        stripe_index, stripe_offset);
 		if(stripe_offset == 0 && raid_io->num_blocks == r5f_info->stripe_blocks) {
 			ret = raid5_submit_full_stripe_write_request(raid_io, stripe_index);
 		} else {

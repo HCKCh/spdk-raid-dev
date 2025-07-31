@@ -426,7 +426,7 @@ raid_bdev_writev_blocks_ext(struct raid_base_bdev_info *base_info, struct spdk_i
 {
 	int rc;
 	uint64_t remapped_offset_blocks = base_info->data_offset + offset_blocks;
-	printf("*** [raid_bdev_writev_blocks_ext] START!!\n");
+	// printf("*** [raid_bdev_writev_blocks_ext] START!!\n");
 	if (spdk_unlikely(spdk_bdev_get_dif_type(&base_info->raid_bdev->bdev) != SPDK_DIF_DISABLE &&
 			  (base_info->raid_bdev->bdev.dif_check_flags & SPDK_DIF_FLAGS_REFTAG_CHECK))) {
 		rc = raid_bdev_remap_dix_reftag(opts->metadata, num_blocks, &base_info->raid_bdev->bdev,
@@ -435,7 +435,7 @@ raid_bdev_writev_blocks_ext(struct raid_base_bdev_info *base_info, struct spdk_i
 			return rc;
 		}
 	}
-	printf("*** [raid_bdev_writev_blocks_ext] END!!\n");
+	// printf("*** [raid_bdev_writev_blocks_ext] END!!\n");
 	return spdk_bdev_writev_blocks_ext(base_info->desc, ch, iov, iovcnt,
 					   remapped_offset_blocks, num_blocks, cb, cb_arg, opts);
 }

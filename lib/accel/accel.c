@@ -859,7 +859,7 @@ spdk_accel_submit_xor(struct spdk_io_channel *ch, void *dst, void **sources, uin
 {
 	struct accel_io_channel *accel_ch = spdk_io_channel_get_ctx(ch);
 	struct spdk_accel_task *accel_task;
-	printf("--- [spdk_accel_submit_xor] called with %u sources\n", nsrcs);
+	// printf("--- [spdk_accel_submit_xor] called with %u sources\n", nsrcs);
 	accel_task = _get_task(accel_ch, cb_fn, cb_arg);
 	if (spdk_unlikely(accel_task == NULL)) {
 		return -ENOMEM;
